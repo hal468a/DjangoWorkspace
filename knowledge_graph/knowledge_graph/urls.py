@@ -22,7 +22,7 @@ from get_json_txt.views import receive_json
 
 urlpatterns = [
     
-    path("test", views.process_text, name='process_text'),
+    path("", views.process_text, name='process_text'),
     path("get_json", receive_json, name='receive_json'),
     path("admin/", admin.site.urls),
 ]
