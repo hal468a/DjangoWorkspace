@@ -17,12 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from segment_api import views as se_v
-from get_json_txt import views as get_v
+from segment_api import views
+from get_json_txt.views import receive_json
 
 urlpatterns = [
     
-    path("", se_v.process_text, name='process_text'),
-    path("get_json_txt", get_v.receive_json, name='receive_json'),
+    path("test", views.process_text, name='process_text'),
+    path("get_json", receive_json, name='receive_json'),
     path("admin/", admin.site.urls),
 ]
