@@ -8,3 +8,4 @@ data = {'text':'凡用兵之法全國篇上，破國次之。全軍篇上，破�
 response = requests.post(url, headers=headers, data=json.dumps(data))
 
 print(response.status_code)
+print(response.json())
