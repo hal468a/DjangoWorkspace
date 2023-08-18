@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "segment_api",
+    "get_json_txt",
 ]
 
 MIDDLEWARE = [
