@@ -18,10 +18,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 from segment_api import views
-from get_json_txt.views import process_text
 
 urlpatterns = [
     # path("test/", views.process_text, name='process_text'), # 測試用
-    path("get_json", process_text, name='process_text'),
+    path("post_txt", views.process_text, name='process_text'),
     path("admin/", admin.site.urls),
 ]

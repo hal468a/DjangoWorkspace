@@ -1,1 +1,4 @@
 django
+translate
+jieba
+opencc
