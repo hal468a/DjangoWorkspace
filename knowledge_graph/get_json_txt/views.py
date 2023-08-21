@@ -1,13 +1,20 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from translate import Translator
 import json, re, jieba
 from opencc import OpenCC
 
+# 移除文字中的網址
+def removeURL(text):
+    url_pattern = re.compile(r'https?://\S+|www\.\S+')
+    return url_pattern.sub(r'', text)
 
+# 簡體轉繁體
 def simplifiedToTraditionalChineseOpenCC(text):
     converter = OpenCC('s2twp')
     return converter.convert(text)
 
+# 
 def chineseQuoteReplaceRE(text):
 
     textList = list(text)
@@ -33,11 +40,21 @@ def chineseQuoteReplaceRE(text):
     text = ''.join(textList)
     return text
 
+# 英文轉繁體
+def English2ChineseTranslation(text):
+    pattern = r'[A-Za-z]+'
+    english_parts = re.findall(pattern, text)
+    for part in english_parts:
+        traditional_chinese_part = Translator(from_lang='en', to_lang='zh-TW').translate(part)
+        text = text.replace(part, traditional_chinese_part)
+    return text
+
 def removeCustomCharactersRE(text):
     text = re.sub('[\u0040-\u007E\uFF20-\uFF60]', r'', text)
     text = re.sub('~#$%&()<=>`\uFF5E\uFF03-\uFF06\uFF08\uFF09\uFF1C-\uFF1E', r'', text) 
     return text
 
+# 停用詞
 def stopWord(text):
     # stopwords = {}.fromkeys([ line.rstrip() for line in open('stopWords.txt', encoding='utf8') ])
     stopwords = [word.strip('\n') for word in open('customStopWords.txt', encoding='utf8')]
@@ -68,21 +85,23 @@ def cutSentenceRE(text):
     return text.split("\n")
 
 @csrf_exempt
-def receive_json(request):
+def process_text(request):
     if request.method == 'POST':
         try:
             text = json.loads(request.body)
             # print(text['text'], type(text['text']))
 
             text = simplifiedToTraditionalChineseOpenCC(text['text'])
+            text = English2ChineseTranslation(text)
+            text = removeURL(text)
             text = removeCustomCharactersRE(text)
             text = cutSentenceRE(text)
 
-            data = {}
+            data = {"text":{}}
             count_line = 1
             
             for line in text:
-                data.update({f"{count_line}": line + "\n"})
+                data["text"].update({f"{count_line}": line + "\n"})
                 count_line += 1
 
             print(data)
