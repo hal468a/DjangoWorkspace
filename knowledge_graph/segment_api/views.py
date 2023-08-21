@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from translate import Translator
-import json, re, jieba
+import json, re, jieba, time
 from opencc import OpenCC
 
 # 移除文字中的網址
@@ -88,11 +88,12 @@ def cutSentenceRE(text):
 def process_text(request):
     if request.method == 'POST':
         try:
+            start = time.time()
             text = json.loads(request.body)
             # print(text['text'], type(text['text']))
 
             text = simplifiedToTraditionalChineseOpenCC(text['text'])
-            text = English2ChineseTranslation(text)
+            # text = English2ChineseTranslation(text)
             text = removeURL(text)
             text = removeCustomCharactersRE(text)
             text = cutSentenceRE(text)
@@ -103,8 +104,10 @@ def process_text(request):
             for line in text:
                 data["text"].update({f"{count_line}": line + "\n"})
                 count_line += 1
-
-            print(data)
+            
+            end = time.time()
+            print(f"Time: {round(end - start, 5)}/sec")
+            # print(data)
             return JsonResponse(data,
                                 json_dumps_params={'ensure_ascii':False})
         except json.JSONDecodeError:
