@@ -92,7 +92,7 @@ def process_text(request):
             text = json.loads(request.body)
             # print(text['text'], type(text['text']))
 
-            text = simplifiedToTraditionalChineseOpenCC(text['text'])
+            text = simplifiedToTraditionalChineseOpenCC(text["text"])
             # text = English2ChineseTranslation(text)
             text = removeURL(text)
             text = removeCustomCharactersRE(text)
@@ -106,8 +106,8 @@ def process_text(request):
                 count_line += 1
             
             end = time.time()
+            print(data)
             print(f"Time: {round(end - start, 5)}/sec")
-            # print(data)
             return JsonResponse(data,
                                 json_dumps_params={'ensure_ascii':False})
         except json.JSONDecodeError:
