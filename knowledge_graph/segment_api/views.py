@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.handlers.wsgi import WSGIRequest
 from translate import Translator
 import json, re, jieba, time
 from opencc import OpenCC
@@ -14,7 +15,6 @@ def simplifiedToTraditionalChineseOpenCC(text):
     converter = OpenCC('s2twp')
     return converter.convert(text)
 
-# 
 def chineseQuoteReplaceRE(text):
 
     textList = list(text)
@@ -85,7 +85,7 @@ def cutSentenceRE(text):
     return text.split("\n")
 
 @csrf_exempt
-def process_text(request):
+def process_text(request:WSGIRequest):
     if request.method == 'POST':
         try:
             start = time.time()
